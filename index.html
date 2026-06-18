@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NH 48 Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:        #2d6a4f;
+    --green-mid:    #40916c;
+    --green-light:  #d8f3dc;
+    --green-xlight: #f0faf2;
+    --black:        #0d0d0d;
+    --gray-90:      #1a1a1a;
+    --gray-70:      #4a4a4a;
+    --gray-50:      #808080;
+    --gray-20:      #d4d4d4;
+    --gray-10:      #efefef;
+    --gray-05:      #f7f7f7;
+    --white:        #ffffff;
+    --border:       #e0e0e0;
+    --border-dark:  #b0b0b0;
+    --radius:       4px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  header {
+    border-bottom: 2px solid var(--black);
+    padding: 2.5rem 2rem 2rem;
+    background: var(--white);
+  }
+  header .inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: .6rem;
+  }
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -.03em;
+    color: var(--black);
+  }
+  h1 em { font-style: normal; color: var(--green); }
+  .tagline {
+    font-size: 13px;
+    color: var(--gray-50);
+    margin-top: .6rem;
+    max-width: 400px;
+    letter-spacing: -.01em;
+  }
+
+  /* ── PROGRESS BLOCK ──────────────────────── */
+  .header-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5rem;
+  }
+  .stat-block { display: flex; flex-direction: column; align-items: flex-end; }
+  .stat-num {
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1;
+    color: var(--black);
+  }
+  .stat-num em { color: var(--green); font-style: normal; }
+  .stat-lbl {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gray-50);
+    margin-top: 4px;
+  }
+  .progress-bar-outer {
+    width: 220px;
+    height: 3px;
+    background: var(--gray-10);
+    margin-bottom: .5rem;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--green);
+    transition: width .5s ease;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: var(--gray-50);
+    letter-spacing: -.01em;
+  }
+
+  /* ── MAIN ─────────────────────────────────── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.75rem 1.25rem;
+  }
+
+  /* ── CONTROLS ────────────────────────────── */
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .controls input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+    height: 36px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 0 12px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--black);
+    outline: none;
+    letter-spacing: -.01em;
+  }
+  .controls input[type="text"]:focus { border-color: var(--green); outline: 2px solid var(--green-light); outline-offset: 0; }
+  .controls select {
+    height: 36px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--black);
+    outline: none;
+    cursor: pointer;
+  }
+  .controls select:focus { border-color: var(--green); }
+  .count { font-size: 11px; color: var(--gray-50); margin-bottom: .5rem; letter-spacing: .02em; text-transform: uppercase; }
+
+  /* ── TABLE ───────────────────────────────── */
+  .tbl-wrap {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    table-layout: fixed;
+  }
+  colgroup col:nth-child(1)  { width: 36px; }
+  colgroup col:nth-child(2)  { width: 168px; }
+  colgroup col:nth-child(3)  { width: 66px; }
+  colgroup col:nth-child(4)  { width: 80px; }
+  colgroup col:nth-child(5)  { width: 60px; }
+  colgroup col:nth-child(6)  { width: 74px; }
+  colgroup col:nth-child(7)  { width: 64px; }
+  colgroup col:nth-child(8)  { width: 68px; }
+  colgroup col:nth-child(9)  { width: 68px; }
+  colgroup col:nth-child(10) { width: 118px; }
+  colgroup col:nth-child(11) { width: 44px; }
+
+  thead th {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray-50);
+    padding: 10px 10px;
+    text-align: left;
+    background: var(--gray-05);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  thead th:hover { color: var(--black); }
+  .si { font-size: 9px; margin-left: 2px; opacity: .4; }
+
+  tbody tr { border-bottom: 1px solid var(--gray-10); transition: background .08s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--gray-05); }
+  tbody tr.done-row { }
+  tbody tr.done-row td { color: var(--gray-50); }
+  tbody tr.done-row .peak-name { color: var(--gray-70); }
+
+  td { padding: 9px 10px; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  td.wrap-cell { white-space: normal; line-height: 1.35; }
+
+  .peak-name { font-weight: 500; color: var(--black); letter-spacing: -.01em; }
+  .num { font-variant-numeric: tabular-nums; color: var(--gray-50); text-align: right; }
+  .order-num { font-size: 11px; color: var(--gray-50); font-weight: 500; }
+
+  a.at-link { color: var(--green); text-decoration: none; font-size: 12px; font-weight: 500; }
+  a.at-link:hover { text-decoration: underline; }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    padding: 2px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .badge.easy { background: var(--green-xlight); color: var(--green); border: 1px solid var(--green-light); }
+  .badge.mod  { background: #f5f5f5; color: var(--gray-70); border: 1px solid var(--gray-20); }
+  .badge.hard { background: var(--black); color: var(--white); }
+  .badge.done { background: var(--green); color: var(--white); }
+
+  .done-meta { font-size: 11px; color: var(--gray-50); line-height: 1.45; white-space: normal; }
+  .done-date { font-weight: 500; color: var(--gray-70); }
+
+  /* ── EDIT BUTTON ─────────────────────────── */
+  .btn-edit {
+    background: none;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--gray-70);
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background .1s, border-color .1s;
+    letter-spacing: .02em;
+  }
+  .btn-edit:hover { background: var(--gray-10); border-color: var(--black); color: var(--black); }
+
+  /* ── MODAL ───────────────────────────────── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 420px;
+  }
+  .modal h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--black);
+    margin-bottom: .2rem;
+  }
+  .modal-sub { font-size: 12px; color: var(--gray-50); margin-bottom: 1.5rem; }
+  .form-row { margin-bottom: 1rem; }
+  .form-row label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray-50);
+    margin-bottom: 5px;
+  }
+  .form-row input[type="text"],
+  .form-row input[type="date"] {
+    width: 100%;
+    height: 36px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 0 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--black);
+    outline: none;
+    background: var(--white);
+  }
+  .form-row input:focus { border-color: var(--green); outline: 2px solid var(--green-light); outline-offset: 0; }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    padding: .75rem;
+    background: var(--gray-05);
+    border-radius: var(--radius);
+  }
+  .toggle-lbl { font-size: 13px; color: var(--black); font-weight: 500; letter-spacing: -.01em; }
+  .switch { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--gray-20);
+    border-radius: 22px;
+    transition: .15s;
+  }
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    left: 3px; bottom: 3px;
+    background: var(--white);
+    border-radius: 50%;
+    transition: .15s;
+  }
+  .switch input:checked + .slider { background: var(--green); }
+  .switch input:checked + .slider::before { transform: translateX(18px); }
+
+  .modal-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-cancel {
+    height: 36px; padding: 0 16px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    background: none;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--gray-70);
+    letter-spacing: -.01em;
+  }
+  .btn-cancel:hover { background: var(--gray-05); }
+  .btn-save {
+    height: 36px; padding: 0 20px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--green);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .1s;
+    letter-spacing: -.01em;
+  }
+  .btn-save:hover { background: var(--green-mid); }
+  .btn-clear {
+    height: 36px; padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: none;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--gray-50);
+    margin-right: auto;
+    letter-spacing: -.01em;
+  }
+  .btn-clear:hover { border-color: var(--border-dark); color: var(--black); background: var(--gray-05); }
+
+  /* ── FOOTER ──────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 11px;
+    color: var(--gray-50);
+    letter-spacing: .02em;
+  }
+  footer a { color: var(--green); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 640px) {
+    header { padding: 1.5rem 1rem; }
+    h1 { font-size: 1.9rem; }
+    .header-right { gap: 1.5rem; }
+    .progress-bar-outer { width: 160px; }
+    main { padding: 1.25rem .75rem; }
+    table { font-size: 12px; }
+    td, thead th { padding: 8px 7px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div>
+      <div class="eyebrow">White Mountains · New Hampshire</div>
+      <h1>NH <em>48</em> Tracker</h1>
+      <p class="tagline">Your personal log for the 48 4,000-footers. Click any row to update your progress.</p>
+    </div>
+    <div class="header-right">
+      <div class="stat-block">
+        <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-bar" style="width:0%"></div></div>
+        <div class="progress-label" id="prog-label"></div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num"><em id="ring-num">0</em><span style="color:#d4d4d4">/48</span></div>
+        <div class="stat-lbl">Peaks done</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search peaks, companions, dates…" oninput="renderTable()">
+    <select id="statusFilter" onchange="renderTable()">
+      <option value="">All hikes</option>
+      <option value="done">Completed</option>
+      <option value="todo">Remaining</option>
+    </select>
+    <select id="diffFilter" onchange="renderTable()">
+      <option value="">All difficulty</option>
+      <option value="Easy">Easy</option>
+      <option value="Moderate">Moderate</option>
+      <option value="Hard">Hard</option>
+    </select>
+  </div>
+  <div class="count" id="count"></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <colgroup>
+        <col><col><col><col><col><col><col><col><col><col><col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th onclick="sortBy('order')">#<span class="si" id="si-order">↑</span></th>
+          <th onclick="sortBy('peaks')">Peak(s)<span class="si" id="si-peaks"></span></th>
+          <th onclick="sortBy('length')" style="text-align:right">Length<span class="si" id="si-length"></span></th>
+          <th onclick="sortBy('elevNum')" style="text-align:right">Elevation<span class="si" id="si-elevNum"></span></th>
+          <th onclick="sortBy('diff')">Diff.<span class="si" id="si-diff"></span></th>
+          <th>AllTrails</th>
+          <th onclick="sortBy('miles')" style="text-align:right">From BOS<span class="si" id="si-miles"></span></th>
+          <th onclick="sortBy('driveMin')">Drive<span class="si" id="si-driveMin"></span></th>
+          <th onclick="sortBy('doneSort')">Status<span class="si" id="si-doneSort"></span></th>
+          <th onclick="sortBy('dateSort')" class="wrap-cell">Date / Companions<span class="si" id="si-dateSort"></span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  NH 48 Tracker &mdash; based on the <a href="https://www.ridj-it.com/single-post/hike-48-4000-footers-new-hampshire" target="_blank">Ridj-it recommended order</a>.
+  Data from <a href="https://www.alltrails.com" target="_blank">AllTrails</a> &amp; <a href="http://www.nhfamilyhikes.com/4Klist.php" target="_blank">NH Family Hikes</a>.
+</footer>
+
+<!-- EDIT MODAL -->
+<div class="modal-backdrop" id="modal" onclick="closeModalIfBackdrop(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h2 id="modal-title">Log hike</h2>
+    <p class="modal-sub" id="modal-sub"></p>
+    <div class="toggle-row">
+      <label class="switch">
+        <input type="checkbox" id="m-done" onchange="toggleDoneFields()">
+        <span class="slider"></span>
+      </label>
+      <span class="toggle-lbl">Mark as completed</span>
+    </div>
+    <div id="done-fields">
+      <div class="form-row">
+        <label for="m-date">Date hiked</label>
+        <input type="date" id="m-date">
+      </div>
+      <div class="form-row">
+        <label for="m-who">Companions</label>
+        <input type="text" id="m-who" placeholder="e.g. Michael, Nick, Ru">
+      </div>
+      <div class="form-row">
+        <label for="m-notes">Notes (optional)</label>
+        <input type="text" id="m-notes" placeholder="Conditions, highlights…">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-clear" id="btn-clear" onclick="clearEntry()">Clear entry</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'nh48-progress-v1';
+
+const HIKES = [
+  {order:1, peaks:"Waumbek", length:6.9, elev:"4,006'", elevNum:4006, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-waumbek-and-mount-starr-king-trail", miles:164, drive:"2h 30m", driveMin:150},
+  {order:2, peaks:"Tecumseh", length:6.0, elev:"4,003'", elevNum:4003, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-tecumseh-trail", miles:126, drive:"2h 5m", driveMin:125},
+  {order:3, peaks:"Hale", length:4.4, elev:"4,045'", elevNum:4045, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hale-via-hale-brook-trail", miles:145, drive:"2h 20m", driveMin:140},
+  {order:4, peaks:"Cabot", length:10.6, elev:"4,170'", elevNum:4170, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-cabot-via-unknown-pond-trail", miles:178, drive:"2h 45m", driveMin:165},
+  {order:5, peaks:"Moriah", length:9.0, elev:"4,049'", elevNum:4049, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moriah-via-carter-moriah-trail", miles:162, drive:"2h 30m", driveMin:150},
+  {order:6, peaks:"Garfield", length:10.0, elev:"4,500'", elevNum:4500, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-garfield-trail", miles:140, drive:"2h 15m", driveMin:135},
+  {order:7, peaks:"Cannon", length:4.6, elev:"4,100'", elevNum:4100, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/cannon-mountain-via-kinsman-ridge-trail", miles:139, drive:"2h 10m", driveMin:130},
+  {order:8, peaks:"Liberty + Flume", length:9.9, elev:"4,459' / 4,328'", elevNum:4459, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-liberty-and-mount-flume-loop", miles:135, drive:"2h 10m", driveMin:130},
+  {order:9, peaks:"Willey, Field & Tom", length:7.4, elev:"4,255' / 4,340' / 4,051'", elevNum:4255, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-willey-field-and-tom-loop", miles:148, drive:"2h 20m", driveMin:140},
+  {order:10, peaks:"Jackson", length:6.5, elev:"4,052'", elevNum:4052, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jackson-and-mount-webster-loop", miles:150, drive:"2h 25m", driveMin:145},
+  {order:11, peaks:"Zealand", length:5.4, elev:"4,260'", elevNum:4260, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/zealand-mountain-via-zealand-and-twinway-trails", miles:147, drive:"2h 20m", driveMin:140},
+  {order:12, peaks:"Moosilauke", length:7.9, elev:"4,802'", elevNum:4802, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moosilauke-via-beaver-brook-trail", miles:133, drive:"2h 10m", driveMin:130},
+  {order:13, peaks:"Carter Dome, Mid. & S. Carter", length:11.8, elev:"4,832' / 4,610' / 4,430'", elevNum:4832, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/carter-dome-and-carter-notch-loop", miles:160, drive:"2h 35m", driveMin:155},
+  {order:14, peaks:"S. Hancock & Hancock", length:9.8, elev:"4,319' / 4,420'", elevNum:4420, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hancock-loop-via-hancock-notch-trail", miles:130, drive:"2h 5m", driveMin:125},
+  {order:15, peaks:"N. & S. Kinsman", length:10.2, elev:"4,293' / 4,358'", elevNum:4358, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-south-kinsman-via-lonesome-lake-trail", miles:138, drive:"2h 10m", driveMin:130},
+  {order:16, peaks:"Osceola & E. Osceola", length:8.4, elev:"4,340' / 4,156'", elevNum:4340, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-osceola-and-east-peak-via-greeley-pond-trail", miles:126, drive:"2h 0m", driveMin:120},
+  {order:17, peaks:"N. Twin, S. Twin & Galehead", length:11.5, elev:"4,761' / 4,902' / 4,180'", elevNum:4902, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/south-twin-and-north-twin-via-north-twin-trail", miles:148, drive:"2h 20m", driveMin:140},
+  {order:18, peaks:"Jefferson", length:5.6, elev:"5,712'", elevNum:5712, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jefferson-via-caps-ridge-trail", miles:157, drive:"2h 30m", driveMin:150},
+  {order:19, peaks:"Pierce & Eisenhower", length:8.6, elev:"4,310' / 4,780'", elevNum:4780, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-pierce-and-eisenhower-loop", miles:155, drive:"2h 25m", driveMin:145},
+  {order:20, peaks:"Carrigain", length:10.6, elev:"4,700'", elevNum:4700, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-carrigain-via-signal-ridge-trail", miles:143, drive:"2h 15m", driveMin:135},
+  {order:21, peaks:"Whiteface & Passaconaway", length:9.3, elev:"4,020' / 4,043'", elevNum:4043, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-whiteface-and-passaconaway-loop", miles:118, drive:"1h 55m", driveMin:115},
+  {order:22, peaks:"Lafayette & Lincoln", length:9.1, elev:"5,280' / 5,089'", elevNum:5280, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/franconia-ridge-loop", miles:138, drive:"2h 10m", driveMin:130},
+  {order:23, peaks:"Mid. & N. Tripyramid", length:11.2, elev:"4,140' / 4,180'", elevNum:4180, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-middle-tripyramid-loop", miles:123, drive:"2h 0m", driveMin:120},
+  {order:24, peaks:"Wildcat A & D", length:10.0, elev:"4,422' / 4,062'", elevNum:4422, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/wildcat-ridge-trail", miles:160, drive:"2h 35m", driveMin:155},
+  {order:25, peaks:"Monroe & Washington", length:10.4, elev:"5,372' / 6,288'", elevNum:6288, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-washington-via-ammonoosuc-ravine-and-jewell-trail-loop", miles:155, drive:"2h 30m", driveMin:150},
+  {order:26, peaks:"Owl's Head", length:18.2, elev:"4,025'", elevNum:4025, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/owls-head-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
+  {order:27, peaks:"Isolation", length:14.4, elev:"4,004'", elevNum:4004, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-isolation-via-glen-boulder-and-davis-path", miles:157, drive:"2h 30m", driveMin:150},
+  {order:28, peaks:"Bondcliff, Bond & W. Bond", length:18.4, elev:"4,265' / 4,698' / 4,540'", elevNum:4698, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/bondcliff-and-mount-bond-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
+  {order:29, peaks:"Adams & Madison", length:10.3, elev:"5,799' / 5,366'", elevNum:5799, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-adams-and-mount-madison-loop-via-appalachia-trailhead", miles:165, drive:"2h 35m", driveMin:155},
+];
+
+// Default progress data (your existing log)
+const DEFAULT_PROGRESS = {
+  1:  {done:true,  date:"2025-10-12", who:"Ru", notes:""},
+  2:  {done:true,  date:"2024-09-07", who:"Michael, Ru", notes:""},
+  3:  {done:false, date:"", who:"", notes:""},
+  4:  {done:false, date:"", who:"", notes:""},
+  5:  {done:true,  date:"2024-08-11", who:"Caroline, Ru", notes:""},
+  6:  {done:true,  date:"2024-07-27", who:"Michael, Ru, Mom, Dad, Caroline", notes:""},
+  7:  {done:true,  date:"2022-07-09", who:"Michael, Nick", notes:""},
+  8:  {done:true,  date:"2024-06-15", who:"Michael, Ru", notes:"Liberty + Flume"},
+  9:  {done:true,  date:"2025-07-13", who:"Caroline, Nick, Ru", notes:""},
+  10: {done:false, date:"", who:"", notes:""},
+  11: {done:true,  date:"2025-09-14", who:"Caroline, Michael, Rui", notes:""},
+  12: {done:true,  date:"2022-06-18", who:"Michael, Nick", notes:"Repeated 10/19/24 with Michael, Ru"},
+  13: {done:false, date:"", who:"", notes:""},
+  14: {done:false, date:"", who:"", notes:""},
+  15: {done:true,  date:"2025-06-19", who:"Michael, Ru", notes:""},
+  16: {done:true,  date:"2024-09-01", who:"Pug, Ru", notes:""},
+  17: {done:false, date:"", who:"", notes:""},
+  18: {done:false, date:"", who:"", notes:""},
+  19: {done:true,  date:"2025-07-05", who:"Ru", notes:""},
+  20: {done:false, date:"", who:"", notes:""},
+  21: {done:true,  date:"2025-08-30", who:"Seesha, Rui", notes:""},
+  22: {done:true,  date:"2022-08-14", who:"Nick, Pug, Jade, Andrew", notes:""},
+  23: {done:false, date:"", who:"", notes:""},
+  24: {done:false, date:"", who:"", notes:""},
+  25: {done:false, date:"", who:"", notes:""},
+  26: {done:false, date:"", who:"", notes:""},
+  27: {done:false, date:"", who:"", notes:""},
+  28: {done:false, date:"", who:"", notes:""},
+  29: {done:true,  date:"2024-06-01", who:"Michael, Nick, Ru", notes:""},
+};
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_PROGRESS));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PROGRESS)); }
+}
+
+function saveProgress(p) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch(e) {}
+}
+
+let progress = loadProgress();
+let sortKey = 'order';
+let sortAsc = true;
+let editingOrder = null;
+
+function fmtDate(isoDate) {
+  if (!isoDate) return '';
+  const [y, m, d] = isoDate.split('-');
+  return `${parseInt(m)}/${parseInt(d)}/${y.slice(2)}`;
+}
+
+function dateToSort(isoDate) {
+  if (!isoDate) return 99999999;
+  return parseInt(isoDate.replace(/-/g,''));
+}
+
+function updateHeader() {
+  const total = 48;
+  const done = Object.values(progress).filter(p => p.done).length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('ring-num').textContent = done;
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = pct + '% complete · ' + (total - done) + ' remaining';
+}
+
+function badgeHTML(d) {
+  const map = {Easy:'easy', Moderate:'mod', Hard:'hard'};
+  return `<span class="badge ${map[d]}">${d}</span>`;
+}
+
+function renderTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const sf = document.getElementById('statusFilter').value;
+  const df = document.getElementById('diffFilter').value;
+
+  let rows = HIKES.map(h => {
+    const p = progress[h.order] || {done:false, date:'', who:'', notes:''};
+    return {...h, ...p,
+      doneSort: p.done ? 0 : 1,
+      dateSort: dateToSort(p.date)
+    };
+  });
+
+  if (q) rows = rows.filter(r =>
+    r.peaks.toLowerCase().includes(q) ||
+    (r.who||'').toLowerCase().includes(q) ||
+    fmtDate(r.date).includes(q) ||
+    (r.notes||'').toLowerCase().includes(q)
+  );
+  if (sf === 'done') rows = rows.filter(r => r.done);
+  if (sf === 'todo') rows = rows.filter(r => !r.done);
+  if (df) rows = rows.filter(r => r.diff === df);
+
+  rows.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    return sortAsc ? (av > bv ? 1 : av < bv ? -1 : 0) : (av < bv ? 1 : av > bv ? -1 : 0);
+  });
+
+  document.getElementById('count').textContent = rows.length + ' of ' + HIKES.length + ' hikes shown';
+
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = rows.map(r => {
+    const metaHTML = r.done
+      ? `<span class="done-date">${fmtDate(r.date)}</span>${r.who ? `<br><span style="font-size:11px;color:#8a8a85">${r.who}</span>` : ''}${r.notes ? `<br><span style="font-size:11px;color:#8a8a85;font-style:italic">${r.notes}</span>` : ''}`
+      : '';
+    return `<tr class="${r.done ? 'done-row' : ''}">
+      <td class="order-num">${r.order}</td>
+      <td><span class="peak-name">${r.peaks}</span></td>
+      <td class="num">${r.length} mi</td>
+      <td class="num">${r.elev}</td>
+      <td>${badgeHTML(r.diff)}</td>
+      <td><a class="at-link" href="${r.at}" target="_blank">View ↗</a></td>
+      <td class="num">${r.miles} mi</td>
+      <td class="num">${r.drive}</td>
+      <td>${r.done ? '<span class="badge done">✓ Done</span>' : '<span style="font-size:11px;color:#aaa">—</span>'}</td>
+      <td class="wrap-cell done-meta">${metaHTML}</td>
+      <td><button class="btn-edit" onclick="openModal(${r.order})">Edit</button></td>
+    </tr>`;
+  }).join('');
+
+  ['order','peaks','length','elevNum','diff','miles','driveMin','doneSort','dateSort'].forEach(k => {
+    const el = document.getElementById('si-' + k);
+    if (el) el.textContent = sortKey === k ? (sortAsc ? '↑' : '↓') : '';
+  });
+
+  updateHeader();
+}
+
+function sortBy(k) {
+  if (sortKey === k) { sortAsc = !sortAsc; } else { sortKey = k; sortAsc = true; }
+  renderTable();
+}
+
+// Modal
+function openModal(order) {
+  editingOrder = order;
+  const h = HIKES.find(h => h.order === order);
+  const p = progress[order] || {done:false, date:'', who:'', notes:''};
+  document.getElementById('modal-title').textContent = h.peaks;
+  document.getElementById('modal-sub').textContent = `${h.diff} · ${h.length} mi · ${h.elev}`;
+  document.getElementById('m-done').checked = p.done;
+  document.getElementById('m-date').value = p.date || '';
+  document.getElementById('m-who').value = p.who || '';
+  document.getElementById('m-notes').value = p.notes || '';
+  toggleDoneFields();
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingOrder = null;
+}
+
+function closeModalIfBackdrop(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+
+function toggleDoneFields() {
+  const done = document.getElementById('m-done').checked;
+  document.getElementById('done-fields').style.display = done ? 'block' : 'none';
+}
+
+function saveEntry() {
+  const done = document.getElementById('m-done').checked;
+  const date = document.getElementById('m-date').value;
+  const who = document.getElementById('m-who').value.trim();
+  const notes = document.getElementById('m-notes').value.trim();
+  progress[editingOrder] = {done, date, who, notes};
+  saveProgress(progress);
+  closeModal();
+  renderTable();
+}
+
+function clearEntry() {
+  progress[editingOrder] = {done:false, date:'', who:'', notes:''};
+  saveProgress(progress);
+  closeModal();
+  renderTable();
+}
+
+// Keyboard ESC to close
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+renderTable();
+</script>
+</body>
+</html>

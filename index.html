@@ -418,7 +418,7 @@
         <div class="progress-label" id="prog-label"></div>
       </div>
       <div class="stat-block">
-        <div class="stat-num"><em id="ring-num">0</em><span style="color:#d4d4d4">/48</span></div>
+        <div class="stat-num"><em id="ring-num">0</em><span style="color:#d4d4d4">/48 peaks</span></div>
         <div class="stat-lbl">Peaks done</div>
       </div>
     </div>
@@ -507,38 +507,39 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'nh48-progress-v1';
+const STORAGE_KEY = 'nh48-progress-v3';
 
 const HIKES = [
-  {order:1, peaks:"Waumbek", length:6.9, elev:"4,006'", elevNum:4006, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-waumbek-and-mount-starr-king-trail", miles:164, drive:"2h 30m", driveMin:150},
-  {order:2, peaks:"Tecumseh", length:6.0, elev:"4,003'", elevNum:4003, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-tecumseh-trail", miles:126, drive:"2h 5m", driveMin:125},
-  {order:3, peaks:"Hale", length:4.4, elev:"4,045'", elevNum:4045, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hale-via-hale-brook-trail", miles:145, drive:"2h 20m", driveMin:140},
-  {order:4, peaks:"Cabot", length:10.6, elev:"4,170'", elevNum:4170, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-cabot-via-unknown-pond-trail", miles:178, drive:"2h 45m", driveMin:165},
-  {order:5, peaks:"Moriah", length:9.0, elev:"4,049'", elevNum:4049, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moriah-via-carter-moriah-trail", miles:162, drive:"2h 30m", driveMin:150},
-  {order:6, peaks:"Garfield", length:10.0, elev:"4,500'", elevNum:4500, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-garfield-trail", miles:140, drive:"2h 15m", driveMin:135},
-  {order:7, peaks:"Cannon", length:4.6, elev:"4,100'", elevNum:4100, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/cannon-mountain-via-kinsman-ridge-trail", miles:139, drive:"2h 10m", driveMin:130},
-  {order:8, peaks:"Liberty + Flume", length:9.9, elev:"4,459' / 4,328'", elevNum:4459, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-liberty-and-mount-flume-loop", miles:135, drive:"2h 10m", driveMin:130},
-  {order:9, peaks:"Willey, Field & Tom", length:7.4, elev:"4,255' / 4,340' / 4,051'", elevNum:4255, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-willey-field-and-tom-loop", miles:148, drive:"2h 20m", driveMin:140},
-  {order:10, peaks:"Jackson", length:6.5, elev:"4,052'", elevNum:4052, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jackson-and-mount-webster-loop", miles:150, drive:"2h 25m", driveMin:145},
-  {order:11, peaks:"Zealand", length:5.4, elev:"4,260'", elevNum:4260, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/zealand-mountain-via-zealand-and-twinway-trails", miles:147, drive:"2h 20m", driveMin:140},
-  {order:12, peaks:"Moosilauke", length:7.9, elev:"4,802'", elevNum:4802, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moosilauke-via-beaver-brook-trail", miles:133, drive:"2h 10m", driveMin:130},
-  {order:13, peaks:"Carter Dome, Mid. & S. Carter", length:11.8, elev:"4,832' / 4,610' / 4,430'", elevNum:4832, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/carter-dome-and-carter-notch-loop", miles:160, drive:"2h 35m", driveMin:155},
-  {order:14, peaks:"S. Hancock & Hancock", length:9.8, elev:"4,319' / 4,420'", elevNum:4420, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hancock-loop-via-hancock-notch-trail", miles:130, drive:"2h 5m", driveMin:125},
-  {order:15, peaks:"N. & S. Kinsman", length:10.2, elev:"4,293' / 4,358'", elevNum:4358, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-south-kinsman-via-lonesome-lake-trail", miles:138, drive:"2h 10m", driveMin:130},
-  {order:16, peaks:"Osceola & E. Osceola", length:8.4, elev:"4,340' / 4,156'", elevNum:4340, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-osceola-and-east-peak-via-greeley-pond-trail", miles:126, drive:"2h 0m", driveMin:120},
-  {order:17, peaks:"N. Twin, S. Twin & Galehead", length:11.5, elev:"4,761' / 4,902' / 4,180'", elevNum:4902, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/south-twin-and-north-twin-via-north-twin-trail", miles:148, drive:"2h 20m", driveMin:140},
-  {order:18, peaks:"Jefferson", length:5.6, elev:"5,712'", elevNum:5712, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jefferson-via-caps-ridge-trail", miles:157, drive:"2h 30m", driveMin:150},
-  {order:19, peaks:"Pierce & Eisenhower", length:8.6, elev:"4,310' / 4,780'", elevNum:4780, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-pierce-and-eisenhower-loop", miles:155, drive:"2h 25m", driveMin:145},
-  {order:20, peaks:"Carrigain", length:10.6, elev:"4,700'", elevNum:4700, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-carrigain-via-signal-ridge-trail", miles:143, drive:"2h 15m", driveMin:135},
-  {order:21, peaks:"Whiteface & Passaconaway", length:9.3, elev:"4,020' / 4,043'", elevNum:4043, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-whiteface-and-passaconaway-loop", miles:118, drive:"1h 55m", driveMin:115},
-  {order:22, peaks:"Lafayette & Lincoln", length:9.1, elev:"5,280' / 5,089'", elevNum:5280, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/franconia-ridge-loop", miles:138, drive:"2h 10m", driveMin:130},
-  {order:23, peaks:"Mid. & N. Tripyramid", length:11.2, elev:"4,140' / 4,180'", elevNum:4180, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-middle-tripyramid-loop", miles:123, drive:"2h 0m", driveMin:120},
-  {order:24, peaks:"Wildcat A & D", length:10.0, elev:"4,422' / 4,062'", elevNum:4422, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/wildcat-ridge-trail", miles:160, drive:"2h 35m", driveMin:155},
-  {order:25, peaks:"Monroe & Washington", length:10.4, elev:"5,372' / 6,288'", elevNum:6288, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-washington-via-ammonoosuc-ravine-and-jewell-trail-loop", miles:155, drive:"2h 30m", driveMin:150},
-  {order:26, peaks:"Owl's Head", length:18.2, elev:"4,025'", elevNum:4025, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/owls-head-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
-  {order:27, peaks:"Isolation", length:14.4, elev:"4,004'", elevNum:4004, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-isolation-via-glen-boulder-and-davis-path", miles:157, drive:"2h 30m", driveMin:150},
-  {order:28, peaks:"Bondcliff, Bond & W. Bond", length:18.4, elev:"4,265' / 4,698' / 4,540'", elevNum:4698, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/bondcliff-and-mount-bond-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
-  {order:29, peaks:"Adams & Madison", length:10.3, elev:"5,799' / 5,366'", elevNum:5799, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-adams-and-mount-madison-loop-via-appalachia-trailhead", miles:165, drive:"2h 35m", driveMin:155},
+  {order:1,  peakCount:1, peaks:"Waumbek", length:6.9, elev:"4,006'", elevNum:4006, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-waumbek-and-mount-starr-king-trail", miles:164, drive:"2h 30m", driveMin:150},
+  {order:2,  peakCount:1, peaks:"Tecumseh", length:6.0, elev:"4,003'", elevNum:4003, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-tecumseh-trail", miles:126, drive:"2h 5m", driveMin:125},
+  {order:3,  peakCount:1, peaks:"Hale", length:4.4, elev:"4,045'", elevNum:4045, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hale-via-hale-brook-trail", miles:145, drive:"2h 20m", driveMin:140},
+  {order:4,  peakCount:1, peaks:"Cabot", length:10.6, elev:"4,170'", elevNum:4170, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-cabot-via-unknown-pond-trail", miles:178, drive:"2h 45m", driveMin:165},
+  {order:5,  peakCount:1, peaks:"Moriah", length:9.0, elev:"4,049'", elevNum:4049, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moriah-via-carter-moriah-trail", miles:162, drive:"2h 30m", driveMin:150},
+  {order:6,  peakCount:1, peaks:"Garfield", length:10.0, elev:"4,500'", elevNum:4500, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-garfield-trail", miles:140, drive:"2h 15m", driveMin:135},
+  {order:7,  peakCount:1, peaks:"Cannon", length:4.6, elev:"4,100'", elevNum:4100, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/cannon-mountain-via-kinsman-ridge-trail", miles:139, drive:"2h 10m", driveMin:130},
+  {order:8,  peakCount:2, peaks:"Liberty + Flume", length:9.9, elev:"4,459' / 4,328'", elevNum:4459, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-liberty-and-mount-flume-loop", miles:135, drive:"2h 10m", driveMin:130},
+  {order:9,  peakCount:3, peaks:"Willey, Field & Tom", length:7.4, elev:"4,255' / 4,340' / 4,051'", elevNum:4255, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-willey-field-and-tom-loop", miles:148, drive:"2h 20m", driveMin:140},
+  {order:10, peakCount:1, peaks:"Jackson", length:6.5, elev:"4,052'", elevNum:4052, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jackson-and-mount-webster-loop", miles:150, drive:"2h 25m", driveMin:145},
+  {order:11, peakCount:1, peaks:"Zealand", length:5.4, elev:"4,260'", elevNum:4260, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/zealand-mountain-via-zealand-and-twinway-trails", miles:147, drive:"2h 20m", driveMin:140},
+  {order:12, peakCount:1, peaks:"Moosilauke", length:7.9, elev:"4,802'", elevNum:4802, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-moosilauke-via-beaver-brook-trail", miles:133, drive:"2h 10m", driveMin:130},
+  {order:13, peakCount:3, peaks:"Carter Dome, Mid. & S. Carter", length:11.8, elev:"4,832' / 4,610' / 4,430'", elevNum:4832, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/carter-dome-and-carter-notch-loop", miles:160, drive:"2h 35m", driveMin:155},
+  {order:14, peakCount:2, peaks:"S. Hancock & Hancock", length:9.8, elev:"4,319' / 4,420'", elevNum:4420, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-hancock-loop-via-hancock-notch-trail", miles:130, drive:"2h 5m", driveMin:125},
+  {order:15, peakCount:2, peaks:"N. & S. Kinsman", length:10.2, elev:"4,293' / 4,358'", elevNum:4358, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-south-kinsman-via-lonesome-lake-trail", miles:138, drive:"2h 10m", driveMin:130},
+  {order:16, peakCount:2, peaks:"Osceola & E. Osceola", length:8.4, elev:"4,340' / 4,156'", elevNum:4340, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-osceola-and-east-peak-via-greeley-pond-trail", miles:126, drive:"2h 0m", driveMin:120},
+  {order:17, peakCount:3, peaks:"N. Twin, S. Twin & Galehead", length:11.5, elev:"4,761' / 4,902' / 4,180'", elevNum:4902, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/south-twin-and-north-twin-via-north-twin-trail", miles:148, drive:"2h 20m", driveMin:140},
+  {order:18, peakCount:1, peaks:"Jefferson", length:5.6, elev:"5,712'", elevNum:5712, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-jefferson-via-caps-ridge-trail", miles:157, drive:"2h 30m", driveMin:150},
+  {order:19, peakCount:2, peaks:"Pierce & Eisenhower", length:8.6, elev:"4,310' / 4,780'", elevNum:4780, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-pierce-and-eisenhower-loop", miles:155, drive:"2h 25m", driveMin:145},
+  {order:20, peakCount:1, peaks:"Carrigain", length:10.6, elev:"4,700'", elevNum:4700, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-carrigain-via-signal-ridge-trail", miles:143, drive:"2h 15m", driveMin:135},
+  {order:21, peakCount:2, peaks:"Whiteface & Passaconaway", length:9.3, elev:"4,020' / 4,043'", elevNum:4043, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-whiteface-and-passaconaway-loop", miles:118, drive:"1h 55m", driveMin:115},
+  {order:22, peakCount:2, peaks:"Lafayette & Lincoln", length:9.1, elev:"5,280' / 5,089'", elevNum:5280, diff:"Moderate", at:"https://www.alltrails.com/trail/us/new-hampshire/franconia-ridge-loop", miles:138, drive:"2h 10m", driveMin:130},
+  {order:23, peakCount:2, peaks:"Mid. & N. Tripyramid", length:11.2, elev:"4,140' / 4,180'", elevNum:4180, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/north-and-middle-tripyramid-loop", miles:123, drive:"2h 0m", driveMin:120},
+  {order:24, peakCount:2, peaks:"Wildcat A & D", length:10.0, elev:"4,422' / 4,062'", elevNum:4422, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/wildcat-ridge-trail", miles:160, drive:"2h 35m", driveMin:155},
+  {order:25, peakCount:2, peaks:"Monroe & Washington", length:10.4, elev:"5,372' / 6,288'", elevNum:6288, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-washington-via-ammonoosuc-ravine-and-jewell-trail-loop", miles:155, drive:"2h 30m", driveMin:150},
+  {order:26, peakCount:1, peaks:"Owl's Head", length:18.2, elev:"4,025'", elevNum:4025, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/owls-head-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
+  {order:27, peakCount:1, peaks:"Isolation", length:14.4, elev:"4,004'", elevNum:4004, diff:"Easy", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-isolation-via-glen-boulder-and-davis-path", miles:157, drive:"2h 30m", driveMin:150},
+  {order:28, peakCount:3, peaks:"Bondcliff, Bond & W. Bond", length:18.4, elev:"4,265' / 4,698' / 4,540'", elevNum:4698, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/bondcliff-and-mount-bond-via-lincoln-woods-trail", miles:135, drive:"2h 10m", driveMin:130},
+  {order:29, peakCount:1, peaks:"Adams", length:10.3, elev:"5,799'", elevNum:5799, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-adams-and-mount-madison-loop-via-appalachia-trailhead", miles:165, drive:"2h 35m", driveMin:155},
+  {order:29.5, peakCount:1, peaks:"Madison", length:10.3, elev:"5,366'", elevNum:5366, diff:"Hard", at:"https://www.alltrails.com/trail/us/new-hampshire/mount-adams-and-mount-madison-loop-via-appalachia-trailhead", miles:165, drive:"2h 35m", driveMin:155},
 ];
 
 // Default progress data (your existing log)
@@ -571,7 +572,8 @@ const DEFAULT_PROGRESS = {
   26: {done:false, date:"", who:"", notes:""},
   27: {done:false, date:"", who:"", notes:""},
   28: {done:false, date:"", who:"", notes:""},
-  29: {done:true,  date:"2024-06-01", who:"Michael, Nick, Ru", notes:""},
+  29: {done:false, date:"", who:"", notes:""},
+  29.5: {done:true,  date:"2024-06-01", who:"Michael, Nick, Ru", notes:""},
 };
 
 function loadProgress() {
@@ -602,12 +604,16 @@ function dateToSort(isoDate) {
 }
 
 function updateHeader() {
-  const total = 48;
-  const done = Object.values(progress).filter(p => p.done).length;
-  const pct = Math.round(done / total * 100);
-  document.getElementById('ring-num').textContent = done;
+  const totalPeaks = 48;
+  let donePeaks = 0;
+  HIKES.forEach(h => {
+    const p = progress[h.order];
+    if (p && p.done) donePeaks += h.peakCount;
+  });
+  const pct = Math.round(donePeaks / totalPeaks * 100);
+  document.getElementById('ring-num').textContent = donePeaks;
   document.getElementById('prog-bar').style.width = pct + '%';
-  document.getElementById('prog-label').textContent = pct + '% complete · ' + (total - done) + ' remaining';
+  document.getElementById('prog-label').textContent = pct + '% complete · ' + (totalPeaks - donePeaks) + ' peaks remaining';
 }
 
 function badgeHTML(d) {
